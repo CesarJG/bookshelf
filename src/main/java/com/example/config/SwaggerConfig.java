@@ -10,7 +10,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Created by CJuarez on 04.05.2016.
+ * Created by CJuarez.
  */
 @Configuration
 @EnableSwagger2
@@ -27,13 +27,13 @@ public class SwaggerConfig
 	{
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("com.example.controller"))
-				.paths(PathSelectors.regex("/bookshelf.*")).build().apiInfo(apiInfo());
+				.paths(PathSelectors.regex("/.*")).build().apiInfo(apiInfo());
 	}
 
 	private ApiInfo apiInfo()
 	{
 		ApiInfo apiInfo = new ApiInfo("Bookshelf API", "Demo REST API for management of a bookshelf", "", "",
-				"cesarjuarezgonzalez@gmail.com", "", "");
+				"www.cesarjg.com", "", "");
 		return apiInfo;
 	}
 }
