@@ -1,113 +1,125 @@
 package com.example.dao;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * Created by CJuarez.
  */
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property="uuid")
-
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "uuid")
 public class BookShelf
 {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-    private String owner;
 
-    @ManyToMany(mappedBy = "shelves", fetch = FetchType.EAGER)
-    private Set<Book> books = new HashSet<Book>();
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	private Set<Book> books = new HashSet<Book>();
 
-    /**
+	/**
      *
      */
-    public BookShelf()
+	public BookShelf()
 	{
 	}
 
-    /**
-     *
-     * @param owner
-     */
-    public BookShelf(final String owner)
+	/**
+	 *
+	 * @param book
+	 */
+	public void addBook(final Book book)
 	{
-
-        this.owner = owner;
+		books.add(book);
+		book.getShelves().add(this);
 	}
 
-    /**
+	/**
+	 *
+	 * @param book
+	 */
+	public void removeBook(final Book book)
+	{
+		books.remove(book);
+		book.getShelves().remove(this);
+	}
+
+	/**
      *
-     * @return
      */
-    public long getId() {
-        return id;
+	public void removeAllBooks(){
+        for(final Book book : new ArrayList<>(books)) {
+            removeBook(book);
+        }
     }
 
-    /**
-     *
-     * @param id
-     */
-    public void setId(final long id) {
-        this.id = id;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public long getId()
+	{
+		return id;
+	}
 
+	/**
+	 *
+	 * @param id
+	 */
+	public void setId(final long id)
+	{
+		this.id = id;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public String getOwner() {
-        return owner;
-    }
+	/**
+	 *
+	 * @return
+	 */
+	public Set<Book> getBooks()
+	{
+		return books;
+	}
 
-    /**
-     *
-     * @param owner
-     */
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
+	/**
+	 *
+	 * @param books
+	 */
+	public void setBooks(Set<Book> books)
+	{
+		this.books = books;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public Set<Book> getBooks() {
-        return books;
-    }
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-    /**
-     *
-     * @param books
-     */
-    public void setBooks(Set<Book> books) {
-        this.books = books;
-    }
+		BookShelf bookShelf = (BookShelf) o;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+		if (id != bookShelf.id)
+			return false;
 
-        BookShelf bookShelf = (BookShelf) o;
+		return true;
+	}
 
-        if (id != bookShelf.id) return false;
-        if (owner != null ? !owner.equals(bookShelf.owner) : bookShelf.owner != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (owner != null ? owner.hashCode() : 0);
-        return result;
-    }
+	@Override
+	public int hashCode()
+	{
+		return (int) (id ^ (id >>> 32));
+	}
 }
