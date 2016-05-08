@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * Created by CJuarez.
  */
-public interface AuthorRepository extends CrudRepository<Author, Long>
-{
+public interface AuthorRepository extends CrudRepository<Author, Long> {
 
-	List<Author> findByLastName(String lastName);
+    List<Author> findByLastName(String lastName);
 }

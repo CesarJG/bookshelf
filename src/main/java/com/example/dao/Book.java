@@ -1,16 +1,10 @@
 package com.example.dao;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,181 +13,120 @@ import java.util.Set;
  */
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "uuid")
-public class Book
-{
+public class Book {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-	private String title;
-	private String isbn;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    private String title;
+    private String isbn;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-	private Set<Author> authors = new HashSet<Author>();
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Author author;
 
-	@ManyToMany(mappedBy = "books", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-	private Set<BookShelf> shelves = new HashSet<BookShelf>();
+    @ManyToMany(mappedBy = "books", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<BookShelf> shelves = new HashSet<BookShelf>();
 
-	/**
+    /**
      *
      */
-	public Book()
-	{
-	}
-
-	/**
-	 *
-	 * @param title
-	 * @param isbn
-	 */
-	public Book(final String title, final String isbn)
-	{
-		this.title = title;
-		this.isbn = isbn;
-	}
-
-	/**
-	 *
-	 * @param author
-	 */
-	public void addAuthor(final Author author)
-	{
-		authors.add(author);
-		author.getBooks().add(this);
-	}
-
-	/**
-	 *
-	 * @param author
-	 */
-	public void removeAuthor(final Author author)
-	{
-		authors.remove(author);
-		author.getBooks().remove(this);
-	}
-
-	/**
-     *
-     */
-	public void removeAllAuthors(){
-        for(final Author author : new ArrayList<>(authors)) {
-            removeAuthor(author);
-        }
+    public Book() {
     }
 
-	/**
-	 *
-	 * @return
-	 */
-	public long getId()
-	{
-		return id;
-	}
+    /**
+     * @param title
+     * @param isbn
+     */
+    public Book(final String title, final String isbn) {
+        this.title = title;
+        this.isbn = isbn;
+    }
 
-	/**
-	 *
-	 * @param id
-	 */
-	public void setId(final long id)
-	{
-		this.id = id;
-	}
+    /**
+     * @return
+     */
+    public long getId() {
+        return id;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getTitle()
-	{
-		return title;
-	}
+    /**
+     * @param id
+     */
+    public void setId(final long id) {
+        this.id = id;
+    }
 
-	/**
-	 *
-	 * @param title
-	 */
-	public void setTitle(final String title)
-	{
-		this.title = title;
-	}
+    /**
+     * @return
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getIsbn()
-	{
-		return isbn;
-	}
+    /**
+     * @param title
+     */
+    public void setTitle(final String title) {
+        this.title = title;
+    }
 
-	/**
-	 *
-	 * @param isbn
-	 */
-	public void setIsbn(String isbn)
-	{
-		this.isbn = isbn;
-	}
+    /**
+     * @return
+     */
+    public String getIsbn() {
+        return isbn;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Set<Author> getAuthors()
-	{
-		return authors;
-	}
+    /**
+     * @param isbn
+     */
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
 
-	/**
-	 *
-	 * @param authors
-	 */
-	public void setAuthors(Set<Author> authors)
-	{
-		this.authors = authors;
-	}
+    /**
+     * @return
+     */
+    public Author getAuthor() {
+        return author;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Set<BookShelf> getShelves()
-	{
-		return shelves;
-	}
+    /**
+     * @param author
+     */
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
 
-	/**
-	 *
-	 * @param shelves
-	 */
-	public void setShelves(Set<BookShelf> shelves)
-	{
-		this.shelves = shelves;
-	}
+    /**
+     * @return
+     */
+    public Set<BookShelf> getShelves() {
+        return shelves;
+    }
 
-	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
+    /**
+     * @param shelves
+     */
+    public void setShelves(Set<BookShelf> shelves) {
+        this.shelves = shelves;
+    }
 
-		Book book = (Book) o;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-		if (isbn != null ? !isbn.equals(book.isbn) : book.isbn != null)
-			return false;
-		if (title != null ? !title.equals(book.title) : book.title != null)
-			return false;
+        Book book = (Book) o;
 
-		return true;
-	}
+        if (isbn != null ? !isbn.equals(book.isbn) : book.isbn != null) return false;
 
-	@Override
-	public int hashCode()
-	{
-		int result = title != null ? title.hashCode() : 0;
-		result = 31 * result + (isbn != null ? isbn.hashCode() : 0);
-		return result;
-	}
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return isbn != null ? isbn.hashCode() : 0;
+    }
 }

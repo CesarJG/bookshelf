@@ -16,58 +16,59 @@ import java.util.Set;
  * Created by CJuarez.
  */
 @Service
-public class AuthorService
-{
+public class AuthorService {
 
-	@Autowired
-	private BookService bookService;
+    @Autowired
+    private BookService bookService;
 
-	@Autowired
-	private AuthorRepository authorRepository;
+    @Autowired
+    private AuthorRepository authorRepository;
 
-	/**
-	 *
-	 * @param author
-	 * @return
-	 */
-	public Author saveAuthor(final Author author)
-	{
-		return authorRepository.save(author);
-	}
+    /**
+     * @param author
+     * @return
+     */
+    public Author saveAuthor(final Author author) {
+        return authorRepository.save(author);
+    }
 
-	/**
-	 *
-	 * @param id
-	 * @return
-	 */
-	public Author findAuthor(final Long id)
-	{
-		return authorRepository.findOne(id);
-	}
+    /**
+     * @param id
+     * @return
+     */
+    public Author findAuthor(final Long id) {
+        return authorRepository.findOne(id);
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public List<Author> findAllAuthors()
-	{
-		return (List<Author>) authorRepository.findAll();
-	}
+    /**
+     * @return
+     */
+    public List<Author> findAllAuthors() {
+        return (List<Author>) authorRepository.findAll();
+    }
 
-	/**
-	 *
-	 * @param id
-	 */
-	@Transactional
-    public void deleteAuthor(final Long id){
+    /**
+     * @param authorId
+     * @return
+     */
+    public List<Book> findBooksOfAuthor(final Long authorId) {
+        final Author author = authorRepository.findOne(authorId);
+        return new ArrayList<>(author.getBooks());
+    }
+
+    /**
+     * @param id
+     */
+    @Transactional
+    public void deleteAuthor(final Long id) {
 
         //First we find the author to delete.
         final Author author = authorRepository.findOne(id);
 
-        //In order to delete an author we have to make the Book --> Author cascade to work.
+        //We update the author of the books.
         Set<Book> savedBooks = new HashSet<>();
-        for(final Book book: new ArrayList<>(author.getBooks())){
-            book.removeAuthor(author);
+        for (final Book book : new ArrayList<>(author.getBooks())) {
+            book.setAuthor(null);
             savedBooks.add(bookService.saveBook(book));
         }
 

@@ -14,26 +14,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig
-{
-	/*
-	 * @Bean public Docket api() { return new
-	 * Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-	 * .paths(PathSelectors.any()).build(); }
-	 */
+public class SwaggerConfig {
 
-	@Bean
-	public Docket api()
-	{
-		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("com.example.controller"))
-				.paths(PathSelectors.regex("/.*")).build().apiInfo(apiInfo());
-	}
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2).select()
+                .apis(RequestHandlerSelectors.basePackage("com.example.controller"))
+                .paths(PathSelectors.regex("/.*")).build().apiInfo(apiInfo());
+    }
 
-	private ApiInfo apiInfo()
-	{
-		ApiInfo apiInfo = new ApiInfo("Bookshelf API", "Demo REST API for management of a bookshelf", "", "",
-				"www.cesarjg.com", "", "");
-		return apiInfo;
-	}
+    private ApiInfo apiInfo() {
+        ApiInfo apiInfo = new ApiInfo("Bookshelf API", "Demo REST API for management of a bookshelf", "", "",
+                "www.cesarjg.com", "", "");
+        return apiInfo;
+    }
 }
