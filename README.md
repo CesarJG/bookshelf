@@ -8,3 +8,5 @@ Technologies:
 - Maven
 
 How to run: download as zip and type in home directory mvn spring-boot:run
+
+Type http://localhost:9010/swagger/index.html in your browser and you will see the documentation of the API.
